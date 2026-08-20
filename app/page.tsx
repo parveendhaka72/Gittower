@@ -10,9 +10,11 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import LandingPage from '../components/LandingPage';
 import RightSidebar from '../components/RightSidebar';
+import InterviewShowcaseModal from '../components/InterviewShowcaseModal';
+import AIInsightCard from '../components/AIInsightCard';
 import rehypeRaw from 'rehype-raw';
 import remarkAlert from 'remark-github-alerts';
-import { ArrowLeft, Send, AtSign as AtSignIcon, Hash, HelpCircle, CheckSquare, GitCommit, MoreHorizontal, UserPlus, UserMinus, Link2, PlayCircle, GitPullRequestDraft, ClipboardList, Bold, Italic, ChevronDown, Code2, Monitor, Box, AlertTriangle, AlertOctagon, Tag } from 'lucide-react';
+import { ArrowLeft, Send, AtSign as AtSignIcon, Hash, HelpCircle, CheckSquare, GitCommit, MoreHorizontal, UserPlus, UserMinus, Link2, PlayCircle, GitPullRequestDraft, ClipboardList, Bold, Italic, ChevronDown, Code2, Monitor, Box, AlertTriangle, AlertOctagon, Tag, Sparkles, Terminal } from 'lucide-react';
 type User = {
   login: string;
   avatar_url: string;
@@ -61,7 +63,7 @@ const processMarkdownMentions = (text: string | undefined | null) => {
   return tokens.join('');
 };
 
-const createMarkdownLinkRenderer = (handleRelatedIssueClick: (num: string | number, baseUrl: string) => void, baseRepoUrl?: string) => (props: any) => {
+const createMarkdownLinkRenderer = (handleRelatedIssueClick: (num: string | number, baseUrl: string) => void, baseRepoUrl?: string) => function MarkdownLink(props: any) {
   const { href, children, ...rest } = props;
   
   if (href?.startsWith('mention://')) {
@@ -239,6 +241,12 @@ const TimelineComment = ({ event, handleRelatedIssueClick, baseRepoUrl }: any) =
   );
 };
 
+const extractRepoName = (url: string) => {
+  if (!url) return 'Unknown';
+  const match = url.match(/repos\/([^\/]+)\/([^\/]+)/);
+  return match ? `${match[1]}/${match[2]}` : 'Unknown';
+};
+
 export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -317,6 +325,43 @@ export default function Home() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showActionMenu, setShowActionMenu] = useState(false);
+  const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState<any>(null);
+  const [isAnalyzingAi, setIsAnalyzingAi] = useState(false);
+
+  const handleTriggerAiTriage = async () => {
+    if (!selectedItem) return;
+    setIsAnalyzingAi(true);
+    try {
+      const repo = extractRepoName(selectedItem.repository_url);
+      const res = await fetch('/api/ai/analyze-issue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: selectedItem.title,
+          repo,
+          number: selectedItem.number,
+          author: selectedItem.user?.login,
+          issueBody: selectedItem.body,
+          state: selectedItem.state,
+          comments: timeline.filter(t => t.event === 'commented' || (!t.event && t.body)).map(t => ({
+            user: t.user?.login || 'unknown',
+            body: t.body || '',
+            createdAt: t.created_at || new Date().toISOString()
+          })),
+          isPullRequest: !!selectedItem.pull_request
+        })
+      });
+      const json = await res.json();
+      if (json.success) {
+        setAiAnalysis(json.data);
+      }
+    } catch (e) {
+      console.error('Failed to analyze with AI:', e);
+    } finally {
+      setIsAnalyzingAi(false);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -578,6 +623,27 @@ export default function Home() {
     }, 0);
   };
 
+  const handleItemSelected = (item: GitHubIssue | null, pushHistory = true) => {
+    if (item) {
+      setReadItems(prev => {
+        const newSet = new Set(prev);
+        newSet.add(item.id);
+        localStorage.setItem('gittower_read_items', JSON.stringify(Array.from(newSet)));
+        return newSet;
+      });
+      
+      if (pushHistory) {
+        const repoMatch = item.html_url?.match(/github\.com\/([^\/]+\/[^\/]+)/);
+        const repo = repoMatch ? repoMatch[1] : '';
+        window.history.pushState({}, '', `?view=${activeView}&issue=${repo}/${item.number}`);
+      }
+    } else if (pushHistory) {
+      window.history.pushState({}, '', `?view=${activeView}`);
+    }
+    setAiAnalysis(null);
+    setSelectedItem(item);
+  };
+
   useEffect(() => {
     const handlePopState = async () => {
       const params = new URLSearchParams(window.location.search);
@@ -614,27 +680,7 @@ export default function Home() {
     handlePopState(); // Trigger on mount
 
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  const handleItemSelected = (item: GitHubIssue | null, pushHistory = true) => {
-    if (item) {
-      setReadItems(prev => {
-        const newSet = new Set(prev);
-        newSet.add(item.id);
-        localStorage.setItem('gittower_read_items', JSON.stringify(Array.from(newSet)));
-        return newSet;
-      });
-      
-      if (pushHistory) {
-        const repoMatch = item.html_url?.match(/github\.com\/([^\/]+\/[^\/]+)/);
-        const repo = repoMatch ? repoMatch[1] : '';
-        window.history.pushState({}, '', `?view=${activeView}&issue=${repo}/${item.number}`);
-      }
-    } else if (pushHistory) {
-      window.history.pushState({}, '', `?view=${activeView}`);
-    }
-    setSelectedItem(item);
-  };
+  }, [activeView]);
 
   const changeView = (view: typeof activeView) => {
     setActiveView(view);
@@ -799,12 +845,6 @@ export default function Home() {
     setIsAuthenticated(false);
     setUser(null);
     setData(null);
-  };
-
-  const extractRepoName = (url: string) => {
-    if (!url) return 'Unknown';
-    const match = url.match(/repos\/([^\/]+)\/([^\/]+)/);
-    return match ? `${match[1]}/${match[2]}` : 'Unknown';
   };
 
   if (isAuthenticated === null) {
@@ -980,6 +1020,24 @@ export default function Home() {
                   <div className="px-3 text-xs font-bold text-app-meta uppercase tracking-widest">Views</div>
                 </div>
                 {renderNavItem('graph', 'Work Tree', FolderTree)}
+
+                <div className="pt-6 pb-2">
+                  <div className="px-3 text-xs font-bold text-blue-400 uppercase tracking-widest flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> Interview Demo
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsInterviewModalOpen(true)}
+                  className="group flex items-center justify-between px-3 py-2.5 rounded-xl transition-all duration-200 w-full text-left bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-blue-600/10 border border-blue-500/30 text-blue-300 hover:text-white hover:border-blue-400 font-semibold shadow-lg shadow-blue-500/5"
+                >
+                  <div className="flex items-center gap-2.5 pl-1">
+                    <Terminal className="w-4 h-4 text-blue-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-sm">Interview Showcase</span>
+                  </div>
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                    Live
+                  </span>
+                </button>
                 
                 <div className="pt-6 pb-2">
                   <div className="px-3 text-xs font-bold text-app-meta uppercase tracking-widest">Settings</div>
@@ -1046,8 +1104,16 @@ export default function Home() {
                 <div className="flex items-start justify-between mb-4 gap-4">
                   <h1 className="text-2xl font-semibold text-app-text leading-tight flex-1 break-words">{selectedItem.title}</h1>
                   
-                  {selectedItem.pull_request && (
-                    <div className="flex items-center gap-2 shrink-0 mt-1">
+                  <div className="flex items-center gap-2 shrink-0 mt-1">
+                    <button
+                      onClick={handleTriggerAiTriage}
+                      disabled={isAnalyzingAi}
+                      className="px-3 py-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-lg text-sm font-medium transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-50"
+                    >
+                      {isAnalyzingAi ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-blue-200" />}
+                      AI Triage
+                    </button>
+                    {selectedItem.pull_request && (
                       <div className="relative group">
                         <button className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
                           <Code2 className="w-4 h-4" /> Code <ChevronDown className="w-3.5 h-3.5" />
@@ -1064,8 +1130,8 @@ export default function Home() {
                           </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3 text-sm text-app-muted">
                   <Image src={selectedItem.user.avatar_url} alt={selectedItem.user.login} width={24} height={24} className="rounded-full" />
@@ -1081,6 +1147,13 @@ export default function Home() {
                   <div className="absolute left-[19px] top-4 bottom-0 w-[2px] bg-app-border z-0"></div>
                   
                   <div className="space-y-8">
+                    {/* AI Intelligence Card */}
+                    {aiAnalysis && (
+                      <div className="relative z-10">
+                        <AIInsightCard analysis={aiAnalysis} />
+                      </div>
+                    )}
+
                     {/* OP Body */}
                     <div className="relative z-10 flex gap-4">
                       <div className="shrink-0 mt-1">
@@ -2088,6 +2161,10 @@ export default function Home() {
         initialBlockers={rightSidebarBlockers}
         initialWaitingOn={rightSidebarWaitingOn}
         initialTimeline={rightSidebarTimeline}
+      />
+      <InterviewShowcaseModal 
+        isOpen={isInterviewModalOpen} 
+        onClose={() => setIsInterviewModalOpen(false)} 
       />
     </div>
   );

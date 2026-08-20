@@ -116,14 +116,28 @@ This codebase is a **Next.js 15 + React 19** application that implements the Git
 
 ---
 
+## 📚 Project Architecture & Engineering Documentation
+
+GitTower is fully documented across all standard engineering artifacts:
+
+| Document | Description | Direct Link |
+| :--- | :--- | :--- |
+| **📄 Product Requirements Document (PRD)** | Problem statement, user personas, functional/non-functional specs, attention-first mental model, KPIs | [docs/PRD.md](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/docs/PRD.md) |
+| **🏛️ High-Level Design (HLD)** | Multi-tier topology, edge middleware, polyglot persistence, security architecture, resilience strategies | [docs/HLD.md](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/docs/HLD.md) |
+| **📐 Low-Level Design (LLD)** | Class diagrams, data models, REST endpoint specs, sequence flows, V8 event loop/closures algorithms | [docs/LLD.md](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/docs/LLD.md) |
+| **🎓 Interview Rubric & Guide** | Master cheat sheet mapping all 25 evaluation points to exact files, code lines, and live demo steps | [docs/INTERVIEW_GUIDE.md](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/docs/INTERVIEW_GUIDE.md) |
+
+---
+
 ## Tech stack
 
-- **Framework:** Next.js (App Router)
-- **UI:** React, Tailwind CSS, Motion
-- **Icons:** lucide-react
-- **Rendering:** react-markdown + remark/rehype plugins
-- **Date formatting:** date-fns
-- **Language:** TypeScript
+- **Framework:** Next.js 15 (App Router)
+- **UI & Animation:** React 19, Tailwind CSS v4, Motion
+- **AI Intelligence:** Google Gemini 2.0/2.5 Flash via `@google/genai` (Structured JSON outputs)
+- **Databases:** MongoDB (NoSQL Document Store) & PostgreSQL (Relational SQL with PK/FK & JOINs)
+- **Icons & Markdown:** lucide-react, react-markdown + remark/rehype plugins
+- **Date Formatting:** date-fns
+- **Language & Runtime:** TypeScript (Strict), Node.js, V8 Engine
 
 ---
 
@@ -134,11 +148,24 @@ app/
   page.tsx                     # Main authenticated workspace UI
   api/auth/*                   # GitHub OAuth helpers and session status
   api/github/*                 # GitHub proxy routes (dashboard, checks, issue, timeline, actions, etc.)
+  api/ai/*                     # Gemini LLM AI Triage & PR Review endpoints
+  api/notes/*                  # MongoDB NoSQL REST CRUD endpoints (GET, POST 201, PATCH, DELETE)
+  api/analytics/*              # PostgreSQL Relational SQL JOINs analytics endpoints
+  api/interview/*              # V8 Event Loop & Closures benchmark endpoint
 components/
+  AIInsightCard.tsx            # Slotted AI triage presentation component
+  InterviewShowcaseModal.tsx   # Live interactive 5-tab showcase panel
   LandingPage.tsx              # Marketing/login entry page
   WorkTree.tsx                 # Attention tree UI
-  WorkTree.css                 # Work tree styling
-app/globals.css                # Global theme and markdown styles
+  RightSidebar.tsx             # Live Activity Center (Active Work, Blockers, Timeline)
+lib/
+  ai/                          # Gemini client, prompt engineering, structured JSON schemas
+  config/                      # Strict environment variable schema & validation
+  db/                          # MongoDB & PostgreSQL clients, models, and SQL queries
+  errors/                      # Custom AppError hierarchy & withErrorHandler HOF
+  js-concepts/                 # JavaScript core concepts (Event Loop, Closures, Hoisting, Async/Await)
+middleware.ts                  # Edge middleware (Auth guard, Token bucket rate limiting, Security headers)
+docs/                          # PRD, HLD, LLD, and Interview Preparation Guide
 ```
 
 ---
