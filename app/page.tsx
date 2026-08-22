@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm';
 import LandingPage from '../components/LandingPage';
 import RightSidebar from '../components/RightSidebar';
 import InterviewShowcaseModal from '../components/InterviewShowcaseModal';
+import { PRReviewModal } from '../components/PRReviewModal';
 import AIInsightCard from '../components/AIInsightCard';
 import rehypeRaw from 'rehype-raw';
 import remarkAlert from 'remark-github-alerts';
@@ -308,6 +309,8 @@ export default function Home() {
     return new Set<number>();
   });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [reviewModalPr, setReviewModalPr] = useState<any>(null);
   
   const [replyText, setReplyText] = useState("");
   const [showMentions, setShowMentions] = useState(false);
@@ -1388,9 +1391,23 @@ export default function Home() {
                             </div>
                           </div>
                           {user?.login && selectedItem.user.login !== user.login && (
-                            <a href={`${selectedItem.html_url}/files`} target="_blank" rel="noreferrer" className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0">
+                            <button
+                              onClick={() => {
+                                setReviewModalPr({
+                                  number: selectedItem.number,
+                                  title: selectedItem.title,
+                                  repo: extractRepoName(selectedItem.repository_url),
+                                  author: selectedItem.user.login,
+                                  body: selectedItem.body,
+                                  html_url: selectedItem.html_url,
+                                });
+                                setIsReviewModalOpen(true);
+                              }}
+                              className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-md text-xs font-medium transition-colors whitespace-nowrap shrink-0 flex items-center gap-1.5 shadow-sm cursor-pointer"
+                            >
+                              <CheckSquare className="w-3.5 h-3.5" />
                               Add your review
-                            </a>
+                            </button>
                           )}
                         </div>
                       )}
@@ -2165,6 +2182,14 @@ export default function Home() {
       <InterviewShowcaseModal 
         isOpen={isInterviewModalOpen} 
         onClose={() => setIsInterviewModalOpen(false)} 
+      />
+      <PRReviewModal
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
+        pr={reviewModalPr}
+        onReviewSubmitted={() => {
+          fetchDashboard();
+        }}
       />
     </div>
   );

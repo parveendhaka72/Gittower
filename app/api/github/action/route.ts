@@ -48,6 +48,21 @@ export async function POST(req: Request) {
         method = "PUT";
         requestBody = {};
         break;
+      case "SUBMIT_REVIEW":
+        url = `https://api.github.com/repos/${repo}/pulls/${issueNumber}/reviews`;
+        method = "POST";
+        requestBody = {
+          event: payload.event || "COMMENT", // 'APPROVE' | 'REQUEST_CHANGES' | 'COMMENT'
+          body: body || (payload.event === "APPROVE" ? "Approved with GitTower Review" : "Review feedback submitted via GitTower"),
+        };
+        break;
+      case "REQUEST_REVIEWERS":
+        url = `https://api.github.com/repos/${repo}/pulls/${issueNumber}/requested_reviewers`;
+        method = "POST";
+        requestBody = {
+          reviewers: Array.isArray(payload.reviewers) ? payload.reviewers : [payload.reviewer].filter(Boolean),
+        };
+        break;
       default:
         return NextResponse.json({ error: "Unsupported action type" }, { status: 400 });
     }
