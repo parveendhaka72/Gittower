@@ -4,17 +4,73 @@
 
 ---
 
-## 📑 Rubric Quick Index
+## 📑 Complete Master Rubric Checklist & Codebase Map (63/63 Points Covered)
 
-| Section | Topics Covered | Total Points |
-| :--- | :--- | :--- |
-| **1. AI Application Engineering** | Multi-step Agents, Tool Calling, RAG, Eval Sets, Streaming, Token/Cost, Prompt Injection, Structured Outputs | **3.8 pts** |
-| **2. Auth & Security** | JWT, OAuth 2.0, Password Hashing, Rate Limiting, RBAC, Input Sanitization, Env Secrets | **1.4 pts** |
-| **3. Backend & System Design** | REST Design, HTTP Codes, Error Handling, Docker, Unit/Integration Tests, Request Validation, File Uploads | **2.4 pts** |
-| **4. Frontend & JS Core** | Event Loop, Closures, Hoisting, Async/Await, Promises vs Callbacks, Controlled Forms, UI States, Routing | **2.3 pts** |
-| **5. NoSQL (MongoDB)** | Aggregation Pipelines, Embedding vs Referencing, Indexes, CRUD, Document Modeling | **1.0 pts** |
-| **6. SQL (PostgreSQL)** | ACID Transactions, Normalization (1NF-3NF), Indexes (B-Tree/Partial), SQL JOINs, ORM (Prisma) | **1.4 pts** |
-| **7. System & Integration** | Redis Caching, Stripe Webhooks, Cron Jobs, WebSockets/Real-time, SSR, 3rd-Party APIs, Git Workflow | **2.8 pts** |
+| Category | Evaluation Topic | Pts | Key File in GitTower | Code Symbol / Implementation |
+| :--- | :--- | :--- | :--- | :--- |
+| **AI App Eng** | Function calling / tool use | 0.3 | [`lib/ai/agent.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/agent.ts) | `AGENT_TOOLS`, `searchGitHubIssues`, `assignReviewer` |
+| **AI App Eng** | LLM API integration | 0.2 | [`lib/ai/gemini.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/gemini.ts) | `analyzeIssueWithGemini()`, `@google/genai` |
+| **AI App Eng** | LLM eval sets | 0.5 | [`lib/ai/agent.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/agent.ts) | `GOLDEN_EVAL_SET`, `runEvalSuite()` |
+| **AI App Eng** | Multi-step agent | 1.0 | [`lib/ai/agent.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/agent.ts) | `runMultiStepAgent()` (ReAct reasoning loop) |
+| **AI App Eng** | Prompt engineering | 0.2 | [`lib/ai/prompts.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/prompts.ts) | `SYSTEM_PROMPTS`, Few-Shot examples, CoT |
+| **AI App Eng** | Prompt injection defenses | 0.3 | [`lib/security/sanitize.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/security/sanitize.ts) | `defendAgainstPromptInjection()`, XML tags |
+| **AI App Eng** | RAG — embeddings & vector retrieval | 0.5 | [`lib/ai/agent.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/agent.ts) | `cosineSimilarity()`, `retrieveRelevantDocuments()` |
+| **AI App Eng** | Streaming responses | 0.3 | [`app/api/ai/stream/route.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/api/ai/stream/route.ts) | `ReadableStream`, Server-Sent Events (SSE) |
+| **AI App Eng** | Structured outputs | 0.2 | [`lib/ai/schemas.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/schemas.ts) | `ISSUE_ANALYSIS_SCHEMA`, `responseSchema` |
+| **AI App Eng** | Token & cost monitoring | 0.3 | [`lib/ai/agent.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/agent.ts) | `calculateTokenAndCost()` |
+| **Auth & Sec** | Input sanitization | 0.2 | [`lib/security/sanitize.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/security/sanitize.ts) | `sanitizeInput()`, XSS entity escaping |
+| **Auth & Sec** | JWT issuance & verification | 0.2 | [`lib/auth/jwt.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/auth/jwt.ts) | `signJwt()`, `verifyJwt()` with Web Crypto |
+| **Auth & Sec** | OAuth / 3rd-party login | 0.2 | [`app/api/auth/callback/route.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/api/auth/callback/route.ts) | GitHub OAuth 2.0 PKCE / Code exchange |
+| **Auth & Sec** | Password hashing | 0.2 | [`lib/auth/jwt.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/auth/jwt.ts) | `hashPassword()`, `verifyPassword()` (PBKDF2/Salt) |
+| **Auth & Sec** | Rate limiting | 0.2 | [`middleware.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/middleware.ts) | `createRateLimiter()` Token Bucket closure |
+| **Auth & Sec** | Role-based authorization (RBAC) | 0.2 | [`lib/auth/jwt.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/auth/jwt.ts) | `hasPermission()`, `UserRole` hierarchy |
+| **Backend** | Backend deployment | 0.2 | [`Dockerfile`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/Dockerfile), [`docker-compose.yml`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/docker-compose.yml) | Next.js standalone runner, Docker Compose |
+| **Backend** | File upload handling | 0.2 | [`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/system/index.ts) | `validateAndProcessFileUpload()` (Magic bytes) |
+| **Backend** | HTTP status codes used correctly | 0.2 | [`lib/errors/withErrorHandler.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/errors/withErrorHandler.ts) | `200`, `201`, `400`, `401`, `403`, `404`, `422`, `429`, `500` |
+| **Backend** | Middleware | 0.2 | [`middleware.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/middleware.ts) | Edge Auth Guard, Rate Limiting, Security Headers |
+| **Backend** | Problem modeling | 0.2 | [`lib/db/models/AttentionNote.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/models/AttentionNote.ts) | Attention Queues, Urgency levels, Priority buckets |
+| **Backend** | Request body validation | 0.2 | [`lib/validation/form.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/validation/form.ts) | `validateSchema()`, `ATTENTION_NOTE_SCHEMA` |
+| **Backend** | RESTful endpoint design | 0.2 | [`app/api/notes/route.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/api/notes/route.ts) | Resource-oriented URIs, HTTP verbs (GET, POST 201) |
+| **Backend** | Server-side error handling | 0.2 | [`lib/errors/AppError.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/errors/AppError.ts) | `AppError` subclasses, uniform error envelopes |
+| **Backend** | System design basics | 0.2 | [`docs/HLD.md`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/docs/HLD.md), [`docs/LLD.md`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/docs/LLD.md) | Multi-tier topology, Client/Server/DB integration |
+| **Engineering** | Automated API & integration testing | 0.2 | [`__tests__/system.test.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/__tests__/system.test.ts) | Jest / Supertest integration test suite |
+| **Engineering** | Containerization with Docker | 0.5 | [`Dockerfile`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/Dockerfile) | Multi-stage Docker builder (`node:20-alpine`) |
+| **Engineering** | Environment & secrets management | 0.2 | [`lib/config/env.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/config/env.ts) | `validateEnvironment()`, typed `AppConfig` |
+| **Engineering** | Git workflow | 0.3 | [`README.md`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/README.md), [`docs/PRD.md`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/docs/PRD.md) | Branching strategy, semver commits, PR checks |
+| **Engineering** | Writing unit tests | 0.3 | [`__tests__/system.test.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/__tests__/system.test.ts) | Unit tests for Auth, Prompt Defense, Validation |
+| **Frontend** | Async data fetching from API | 0.2 | [`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/page.tsx) | `fetch()`, `Promise.all()`, abort controllers |
+| **Frontend** | Client-side routing | 0.2 | [`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/page.tsx) | Query params (`?view=inbox&issue=...`), `popstate` |
+| **Frontend** | Form handling — controlled inputs | 0.2 | [`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/page.tsx) | Controlled reply box with `@` mention popup caret |
+| **Frontend** | Form validation | 0.2 | [`lib/validation/form.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/validation/form.ts) | Inline form validation, error state bindings |
+| **Frontend** | Frontend deployment | 0.2 | [`next.config.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/next.config.ts) | Vercel / Standalone static asset bundling |
+| **Frontend** | JavaScript — async/await | 0.1 | [`lib/js-concepts/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/js-concepts/index.ts) | `runAsyncBenchmark()` (`Promise.all` vs loop) |
+| **Frontend** | JavaScript — Closures | 0.1 | [`lib/js-concepts/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/js-concepts/index.ts) | `createMemoizer()`, private state encapsulation |
+| **Frontend** | JavaScript — Event loop | 0.1 | [`lib/js-concepts/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/js-concepts/index.ts) | `runEventLoopDemonstration()` (Microtasks/Macrotasks) |
+| **Frontend** | JavaScript — Hoisting | 0.1 | [`lib/js-concepts/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/js-concepts/index.ts) | `demonstrateHoisting()` (`var` vs TDZ vs functions) |
+| **Frontend** | JavaScript — Promises vs callbacks | 0.1 | [`lib/js-concepts/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/js-concepts/index.ts) | `promisify()`, `comparePromisesVsCallbacks()` |
+| **Frontend** | Loading & error UI states | 0.2 | [`components/InterviewShowcaseModal.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/components/InterviewShowcaseModal.tsx) | Skeleton loaders, spinners, error alerts |
+| **Frontend** | React component composition | 0.2 | [`components/AIInsightCard.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/components/AIInsightCard.tsx) | Slotted layouts, decoupled presentational UI |
+| **Frontend** | Responsive layout & styling | 0.2 | [`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/page.tsx) | Tailwind v4 mobile-first grid, collapsible drawer |
+| **Frontend** | Side effects with useEffect | 0.2 | [`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/page.tsx) | Event listeners, cleanups, polling intervals |
+| **Frontend** | State management with useState | 0.2 | [`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/page.tsx) | Multi-slice state, localStorage sync |
+| **NoSQL** | Aggregation pipelines | 0.2 | [`lib/db/mongo-aggregation.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/mongo-aggregation.ts) | `$match`, `$group`, `$unwind`, `$project`, `$sort` |
+| **NoSQL** | CRUD operations (Mongo) | 0.2 | [`app/api/notes/route.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/api/notes/route.ts), [`app/api/notes/[id]/route.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/api/notes/[id]/route.ts) | POST (201 Created), GET, PATCH, DELETE |
+| **NoSQL** | Embedding vs referencing | 0.2 | [`lib/db/mongo-aggregation.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/mongo-aggregation.ts) | 1:Few tags embedding vs 1:Many user references |
+| **NoSQL** | Indexing for performance (Mongo) | 0.2 | [`lib/db/mongo-aggregation.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/mongo-aggregation.ts) | Compound `{repoFullName: 1, itemNumber: 1}`, TTL |
+| **NoSQL** | Schema modeling (Mongo) | 0.2 | [`lib/db/models/AttentionNote.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/models/AttentionNote.ts) | Typed Mongoose document model & interfaces |
+| **SQL** | Filtering, ordering, grouping | 0.2 | [`lib/db/sql-queries.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/sql-queries.ts) | `WHERE`, `ORDER BY`, `GROUP BY`, `HAVING` |
+| **SQL** | Indexing for performance (SQL) | 0.2 | [`lib/db/postgres-transactions.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/postgres-transactions.ts) | B-Tree index, Partial index, GIN trigram |
+| **SQL** | Normalization basics | 0.2 | [`lib/db/postgres-transactions.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/postgres-transactions.ts) | 1NF (Atomicity), 2NF, 3NF, BCNF |
+| **SQL** | ORM usage (Prisma/Sequelize) | 0.2 | [`lib/db/postgres-transactions.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/postgres-transactions.ts) | Prisma Schema models, `@relation`, relations |
+| **SQL** | Relational schema design (PK/FK) | 0.2 | [`lib/db/postgres.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/postgres.ts) | `users`, `repositories`, `pull_requests` PK/FK |
+| **SQL** | SQL JOINs | 0.2 | [`lib/db/sql-queries.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/sql-queries.ts) | `INNER JOIN`, `LEFT JOIN`, `AGGREGATE JOIN` |
+| **SQL** | Transactions | 0.2 | [`lib/db/postgres-transactions.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/postgres-transactions.ts) | `BEGIN`, `COMMIT`, `ROLLBACK`, row-locking |
+| **System** | 3rd-party API integration | 0.3 | [`app/api/github/*`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/api/github/) | GitHub REST API v3, Octokit, Webhooks |
+| **System** | Caching with Redis | 0.4 | [`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/system/index.ts) | `RedisCacheManager`, Cache-Aside pattern (`getOrSet`) |
+| **System** | Payment gateway integration | 0.5 | [`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/system/index.ts) | `PaymentGatewayService`, Stripe webhook & idempotency |
+| **System** | Scheduled jobs / cron | 0.3 | [`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/system/index.ts) | `CronScheduler`, stale PR cleaner task |
+| **System** | Server-side rendering (SSR) | 0.5 | [`app/layout.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/layout.tsx) | Next.js App Router hybrid SSR/CSR architecture |
+| **System** | WebSocket / real-time | 0.5 | [`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/system/index.ts) | `RealTimeBroadcastManager`, pub/sub channels |
 
 ---
 
@@ -22,7 +78,7 @@
 
 ### Q1: How does Function Calling / Tool Use work with LLMs? (0.3 pts)
 **1.5-Min Verbal Answer:**
-"Function calling is the mechanism that turns an LLM from a text generator into an action-taking agent. The model itself doesn't execute our code; instead, we pass tool declarations with strict JSON schemas—defining the function name, description, and required parameters. When user input requires external data or an action, the LLM detects that intent and pauses its text generation, emitting a structured tool call object containing the exact function name and arguments.
+"Function calling turns an LLM from a passive text generator into an action-taking agent. The model itself doesn't execute our code; instead, we provide tool declarations with strict JSON schemas—defining the function name, description, and required parameters. When user input requires external data or an action, the LLM detects that intent and pauses its text generation, emitting a structured tool call object containing the exact function name and arguments.
 
 Our backend intercepts this tool call, validates the arguments, executes the local code—such as querying a database or an external API—and feeds the tool's execution output back to the LLM as a tool-role message. The model then synthesizes a final response using that live data.
 
@@ -79,7 +135,7 @@ In GitTower ([`lib/security/sanitize.ts`](file:///c:/Users/parveen/OneDrive/Desk
 
 On the server, we call the streaming API (e.g., `generateContentStream` on Gemini) which returns an asynchronous iterable stream. We pipe this stream through a `TransformStream` into Next.js App Router `Response`. On the client, React consumes the stream via the Fetch API `getReader()` loop, incrementally updating UI state.
 
-The engineering trade-off is handling structured JSON. If you stream raw JSON, the frontend receives partial unclosed braces that break `JSON.parse`. In GitTower, for structured triage cards we use fast deterministic generation with strict schemas, and for long markdown review narratives we stream chunks with optimistic renderers."
+The engineering trade-off is handling structured JSON. If you stream raw JSON, the frontend receives partial unclosed braces that break `JSON.parse`. In GitTower ([`app/api/ai/stream/route.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/api/ai/stream/route.ts)), for structured triage cards we use fast deterministic generation with strict schemas, and for long markdown review narratives we stream chunks with optimistic renderers."
 
 ---
 
@@ -93,9 +149,17 @@ In GitTower ([`lib/ai/agent.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTo
 
 ---
 
+### Q8: What is Prompt Engineering & Structured Outputs? (0.4 pts)
+**1.5-Min Verbal Answer:**
+"Prompt engineering is the systematic design of instructions, context, and constraints passed to an LLM to maximize accuracy and consistency. In GitTower ([`lib/ai/prompts.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/prompts.ts)), we use role prompting, few-shot contextual examples, and chain-of-thought instructions guiding the model to evaluate urgency before outputting a score.
+
+Structured outputs solve the non-deterministic formatting issue. Without strict schemas, models output markdown or conversational filler that breaks backend JSON parsers. In Gemini, we pass `responseSchema` and `responseMimeType: 'application/json'` in [`lib/ai/schemas.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/ai/schemas.ts). This enforces grammar-constrained sampling at the token-decoding layer, mathematically guaranteeing that the output strictly conforms to our TypeScript `IssueAnalysisResult` interface."
+
+---
+
 # 2. Authentication, Security & Middleware
 
-### Q8: How does JWT Issuance, Verification, and Revocation work? (0.2 pts)
+### Q9: How does JWT Issuance, Verification, and Revocation work? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "JSON Web Tokens (JWT) are stateless authentication tokens composed of three Base64URL-encoded parts: Header (algorithm & token type), Payload (claims like `userId`, `role`, `exp`), and Signature (`HMAC-SHA256(header.payload, secret)`).
 
@@ -105,7 +169,7 @@ In GitTower ([`lib/auth/jwt.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTo
 
 ---
 
-### Q9: How does OAuth 2.0 3rd-Party Login work under the hood? (0.2 pts)
+### Q10: How does OAuth 2.0 3rd-Party Login work under the hood? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "OAuth 2.0 Authorization Code flow allows users to grant access to third-party resources (like their GitHub repositories) without sharing their password. The flow has four steps:
 
@@ -118,7 +182,7 @@ In GitTower ([`app/api/auth/callback/route.ts`](file:///c:/Users/parveen/OneDriv
 
 ---
 
-### Q10: How do you safely store passwords and handle Password Hashing? (0.2 pts)
+### Q11: How do you safely store passwords and handle Password Hashing? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "Passwords must never be stored in plain text or using fast general-purpose hash functions like MD5 or SHA-256, because modern GPUs can compute billions of SHA-256 hashes per second using rainbow tables and brute force.
 
@@ -130,7 +194,7 @@ In GitTower ([`lib/auth/jwt.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTo
 
 ---
 
-### Q11: How do you implement Rate Limiting and prevent Abuse? (0.2 pts)
+### Q12: How do you implement Rate Limiting and prevent Abuse? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "Rate limiting protects backend systems from Denial of Service (DoS) attacks, brute-force login attempts, and runaway API consumption. Common algorithms include Fixed Window, Sliding Window Log, and Token Bucket.
 
@@ -140,7 +204,7 @@ In distributed production environments across multiple serverless instances, loc
 
 ---
 
-### Q12: How does Role-Based Access Control (RBAC) work in Next.js? (0.2 pts)
+### Q13: How does Role-Based Access Control (RBAC) work in Next.js? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "Role-Based Access Control (RBAC) restricts system actions based on assigned user roles (`Admin`, `Maintainer`, `Contributor`, `Guest`). Each role has a hierarchy or set of explicit permissions.
 
@@ -154,7 +218,28 @@ In GitTower ([`lib/auth/jwt.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTo
 
 # 3. Backend Architecture, Testing & Databases
 
-### Q13: How do you handle File Uploads securely? (0.2 pts)
+### Q14: How do you handle Request Body & Form Validation? (0.4 pts)
+**1.5-Min Verbal Answer:**
+"Incoming user input must be validated strictly before executing database queries or business logic. Validating at runtime prevents corrupted records, SQL/NoSQL injection, and unexpected runtime type errors.
+
+In GitTower ([`lib/validation/form.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/validation/form.ts)), we implement a declarative schema engine `validateSchema`. For our attention notes creation endpoint (`POST /api/notes`), we enforce rules: `title` must be a string between 3 and 200 characters, `priority` must match an enum (`P0-P3`), and `repoFullName` must match an `owner/repo` regex pattern.
+
+If validation fails, the handler halts execution immediately and returns `HTTP 422 Unprocessable Entity` with a structured map of field errors (`{ errors: { priority: "Priority must be P0, P1, P2, or P3" } }`). On the frontend, React forms bind directly to these field error keys to display red inline error messages next to the offending input field."
+
+---
+
+### Q15: How do you design RESTful Endpoints & Error Handling? (0.4 pts)
+**1.5-Min Verbal Answer:**
+"RESTful API design uses resource-oriented URIs and standard HTTP verbs: `GET` for retrieving, `POST` for creating (returning `201 Created`), `PATCH` for partial updates (`200 OK`), and `DELETE` for removal (`200 OK`).
+
+In GitTower ([`app/api/notes/route.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/api/notes/route.ts) and [`lib/errors/withErrorHandler.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/errors/withErrorHandler.ts)), all route handlers are wrapped with the `withErrorHandler` Higher-Order Function. This enforces:
+1. **Typed Error Hierarchy**: Custom `AppError` subclasses (`BadRequestError` [400], `UnauthorizedError` [401], `NotFoundError` [404], `ValidationError` [422], `InternalServerError` [500]).
+2. **Uniform Response Envelopes**: `{ success: true, data, meta: { timestamp, path } }` on success, and `{ success: false, error: { code, message, statusCode } }` on failure.
+3. **Observability**: Automatically logging 500 server errors and injecting response latency headers (`X-Response-Time`)."
+
+---
+
+### Q16: How do you handle File Uploads securely? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "File uploads introduce serious security vulnerabilities: server disk exhaustion, malware execution, and MIME-type spoofing (e.g., uploading an executable disguised as a `.png`).
 
@@ -168,7 +253,7 @@ In GitTower ([`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/G
 
 ---
 
-### Q14: How do MongoDB Aggregation Pipelines work? (0.2 pts)
+### Q17: How do MongoDB Aggregation Pipelines work? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "MongoDB Aggregation Pipelines process multi-stage transformations on documents, similar to a Unix pipeline (`cmd1 | cmd2 | cmd3`). Each stage transforms documents as they pass through, allowing complex filtering, grouping, reshaping, and statistical calculations directly on the database engine.
 
@@ -183,7 +268,7 @@ In GitTower ([`lib/db/mongo-aggregation.ts`](file:///c:/Users/parveen/OneDrive/D
 
 ---
 
-### Q15: Embedding vs Referencing in NoSQL — how do you decide? (0.2 pts)
+### Q18: Embedding vs Referencing in NoSQL — how do you decide? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "The choice between Embedding (Denormalization) and Referencing (Normalization) in MongoDB comes down to **Data Access Patterns** and **Relationship Cardinality**.
 
@@ -198,7 +283,7 @@ In GitTower ([`lib/db/models/AttentionNote.ts`](file:///c:/Users/parveen/OneDriv
 
 ---
 
-### Q16: How do ACID Transactions work in PostgreSQL? (0.2 pts)
+### Q19: How do ACID Transactions work in PostgreSQL? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "ACID transactions guarantee data integrity when performing multiple related database operations:
 * **Atomicity**: All operations succeed, or everything rolls back (All-or-Nothing).
@@ -212,7 +297,7 @@ In GitTower ([`lib/db/postgres-transactions.ts`](file:///c:/Users/parveen/OneDri
 
 ---
 
-### Q17: Database Indexing: B-Tree vs Hash vs Partial Indexes (0.2 pts)
+### Q20: Database Indexing: B-Tree vs Hash vs Partial Indexes (0.2 pts)
 **1.5-Min Verbal Answer:**
 "Indexes are specialized data structures that allow the database engine to find rows in $O(\log N)$ or $O(1)$ time instead of performing expensive full table scans ($O(N)$).
 
@@ -224,7 +309,7 @@ In GitTower ([`lib/db/postgres-transactions.ts`](file:///c:/Users/parveen/OneDri
 
 ---
 
-### Q18: Database Normalization (1NF, 2NF, 3NF) vs Denormalization (0.2 pts)
+### Q21: Database Normalization (1NF, 2NF, 3NF) vs Denormalization (0.2 pts)
 **1.5-Min Verbal Answer:**
 "Database normalization organizes relational tables to minimize data redundancy and prevent insertion, update, and deletion anomalies.
 
@@ -236,9 +321,19 @@ In GitTower ([`lib/db/postgres.ts`](file:///c:/Users/parveen/OneDrive/Desktop/Gi
 
 ---
 
+### Q22: How do SQL JOINs (INNER, LEFT, AGGREGATE) work? (0.2 pts)
+**1.5-Min Verbal Answer:**
+"SQL JOINs combine rows from two or more tables based on a related column (Foreign Key).
+
+* **INNER JOIN**: Returns only rows where there is a match in both tables. In GitTower ([`lib/db/sql-queries.ts`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/lib/db/sql-queries.ts)), we join `review_assignments` with `pull_requests`, `repositories`, and `users` to fetch active assignments with reviewer avatar URLs.
+* **LEFT JOIN**: Returns all rows from the left table, and matched rows from the right table. If no match exists, right table columns are `NULL`. We use this to list all repositories alongside their active workflow blockers—ensuring unblocked repositories still appear in the list with `NULL` blockers.
+* **AGGREGATE JOIN**: Combines joins with `GROUP BY` and aggregate functions (`COUNT()`, `AVG()`). We use this in `/api/analytics/bottlenecks` to group by reviewer and compute average review turnaround time (TAT) across the team."
+
+---
+
 # 4. System Design, Caching & Integration
 
-### Q19: How does Caching with Redis work (Cache-Aside Pattern)? (0.4 pts)
+### Q23: How does Caching with Redis work (Cache-Aside Pattern)? (0.4 pts)
 **1.5-Min Verbal Answer:**
 "Redis is an in-memory key-value data store used to cache expensive database queries and third-party API responses in sub-millisecond time.
 
@@ -252,7 +347,7 @@ In GitTower ([`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/G
 
 ---
 
-### Q20: How do you integrate Payment Gateways (Stripe) and Webhooks? (0.5 pts)
+### Q24: How do you integrate Payment Gateways (Stripe) and Webhooks? (0.5 pts)
 **1.5-Min Verbal Answer:**
 "Payment integration involves two channels: Synchronous Checkout and Asynchronous Webhooks. The browser initiates a checkout session, but the server must *never* rely on the frontend redirect to grant subscriptions because users can close the tab or tamper with client parameters.
 
@@ -266,7 +361,7 @@ In GitTower ([`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/G
 
 ---
 
-### Q21: How do Scheduled Jobs & Background Cron Workers work? (0.3 pts)
+### Q25: How do Scheduled Jobs & Background Cron Workers work? (0.3 pts)
 **1.5-Min Verbal Answer:**
 "Scheduled jobs automate periodic maintenance tasks—such as archiving stale pull requests, generating daily digest emails, or syncing bottleneck metrics.
 
@@ -278,7 +373,7 @@ In GitTower ([`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/G
 
 ---
 
-### Q22: WebSockets vs Server-Sent Events (SSE) for Real-Time UI (0.5 pts)
+### Q26: WebSockets vs Server-Sent Events (SSE) for Real-Time UI (0.5 pts)
 **1.5-Min Verbal Answer:**
 "Real-time communication keeps client interfaces synchronized with backend events without polling. The two primary technologies are WebSockets and Server-Sent Events (SSE):
 
@@ -289,7 +384,7 @@ In GitTower ([`lib/system/index.ts`](file:///c:/Users/parveen/OneDrive/Desktop/G
 
 ---
 
-### Q23: Containerization with Docker & Multi-Stage Builds (0.5 pts)
+### Q27: Containerization with Docker & Multi-Stage Builds (0.5 pts)
 **1.5-Min Verbal Answer:**
 "Docker packages an application with its entire runtime environment—Node.js, system libraries, and configuration files—ensuring identical behavior across development, staging, and production environments.
 
@@ -304,7 +399,7 @@ In GitTower ([`Dockerfile`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/D
 
 # 5. JavaScript Engine & Frontend Mastery
 
-### Q24: How does the JavaScript Event Loop, Microtasks & Macrotasks work? (0.1 pts)
+### Q28: How does the JavaScript Event Loop, Microtasks & Macrotasks work? (0.1 pts)
 **1.5-Min Verbal Answer:**
 "JavaScript is single-threaded and non-blocking, powered by the V8 event loop. The execution model consists of:
 1. **Synchronous Call Stack**: Code executes top-to-bottom.
@@ -317,7 +412,7 @@ If a microtask schedules another microtask, it will execute in the same tick bef
 
 ---
 
-### Q25: What are Closures and how are they used in Production? (0.1 pts)
+### Q29: What are Closures and how are they used in Production? (0.1 pts)
 **1.5-Min Verbal Answer:**
 "A closure is the combination of a function bundled together with references to its lexical environment. In JavaScript, an inner function always retains access to variables declared in its outer enclosing scope, even after the outer function has finished executing.
 
@@ -330,7 +425,7 @@ In GitTower ([`lib/js-concepts/index.ts`](file:///c:/Users/parveen/OneDrive/Desk
 
 ---
 
-### Q26: What is Hoisting and the Temporal Dead Zone (TDZ)? (0.1 pts)
+### Q30: What is Hoisting and the Temporal Dead Zone (TDZ)? (0.1 pts)
 **1.5-Min Verbal Answer:**
 "Hoisting is JavaScript's default behavior of moving variable and function declarations to the top of their enclosing scope during the compilation phase, before code execution.
 
@@ -343,7 +438,7 @@ In GitTower ([`lib/js-concepts/index.ts`](file:///c:/Users/parveen/OneDrive/Desk
 
 ---
 
-### Q27: Promises vs Callbacks vs Async/Await — how do they compare? (0.1 pts)
+### Q31: Promises vs Callbacks vs Async/Await — how do they compare? (0.1 pts)
 **1.5-Min Verbal Answer:**
 "JavaScript async patterns evolved across three generations:
 
@@ -355,7 +450,7 @@ In GitTower ([`lib/js-concepts/index.ts`](file:///c:/Users/parveen/OneDrive/Desk
 
 ---
 
-### Q28: React Controlled Inputs vs Uncontrolled Inputs (0.2 pts)
+### Q32: React Controlled Inputs vs Uncontrolled Inputs (0.2 pts)
 **1.5-Min Verbal Answer:**
 "In React form handling:
 * **Controlled Inputs**: The input's value is driven by React component state (`value={text}` + `onChange={(e) => setText(e.target.value)}`). React is the single source of truth.
@@ -367,7 +462,7 @@ In GitTower ([`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower
 
 ---
 
-### Q29: How do you handle Loading & Error UI States gracefully in React? (0.2 pts)
+### Q33: How do you handle Loading & Error UI States gracefully in React? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "Production user interfaces must handle four distinct states for every async operation: **Idle, Loading, Success, and Error**.
 
@@ -381,7 +476,7 @@ In GitTower ([`components/InterviewShowcaseModal.tsx`](file:///c:/Users/parveen/
 
 ---
 
-### Q30: How do you achieve Responsive Layout & Styling Competence? (0.2 pts)
+### Q34: How do you achieve Responsive Layout & Styling Competence? (0.2 pts)
 **1.5-Min Verbal Answer:**
 "Responsive web design ensures seamless usability across mobile phones, tablets, and ultra-wide desktop monitors without layout breakage.
 
@@ -392,3 +487,14 @@ We achieve this via:
 4. **Viewport Meta & Touch Targets**: Setting `width=device-width` and ensuring all clickable interactive elements meet the minimum 44x44px touch target guidelines.
 
 In GitTower ([`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/page.tsx)), the layout adapts smoothly from a full 3-column workstation on desktop down to a single-column prioritized feed on mobile devices."
+
+---
+
+### Q35: How does Server-Side Rendering (SSR) work in Next.js App Router? (0.5 pts)
+**1.5-Min Verbal Answer:**
+"Next.js App Router uses a hybrid architecture combining React Server Components (RSC) and Client Components (`'use client'`).
+
+* **Server Components (Default)**: Execute only on the server at request or build time. They can directly query databases or private backend APIs without exposing secrets to the browser. They stream static HTML and a lightweight JSON payload of the virtual DOM, introducing zero client-side JavaScript bundle overhead.
+* **Client Components (`'use client'`)**: Hydrated in the browser to enable interactivity, state hooks (`useState`, `useEffect`), browser APIs (`localStorage`, `window.history`), and event listeners.
+
+In GitTower ([`app/layout.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/layout.tsx) and [`app/page.tsx`](file:///c:/Users/parveen/OneDrive/Desktop/GitTower/app/page.tsx)), root layouts and metadata are server-rendered for instant First Contentful Paint (FCP) and SEO, while the interactive triage dashboard runs as a high-performance client application."

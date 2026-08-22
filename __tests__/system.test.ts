@@ -3,12 +3,17 @@
  * Topics:
  * - Writing unit tests (0.3 pts)
  * - Automated API testing / integration tests (0.2 pts)
+ * - Request body validation (0.2 pts)
+ * - Form validation (0.2 pts)
  */
 
 import { signJwt, verifyJwt, hashPassword, verifyPassword, hasPermission } from '../lib/auth/jwt';
 import { sanitizeInput, defendAgainstPromptInjection } from '../lib/security/sanitize';
 import { calculateTokenAndCost, cosineSimilarity, runEvalSuite } from '../lib/ai/agent';
-import { RedisCacheManager } from '../lib/system';
+import { RedisCacheManager, validateAndProcessFileUpload } from '../lib/system';
+import { validateSchema, ATTENTION_NOTE_SCHEMA } from '../lib/validation/form';
+import { runMongoAggregationPipeline } from '../lib/db/mongo-aggregation';
+import { executeAtomicReviewTransfer } from '../lib/db/postgres-transactions';
 
 describe('1. Auth & Security Unit Tests', () => {
   test('JWT: Signs and verifies token payload correctly', async () => {
@@ -81,8 +86,29 @@ describe('3. AI Agent & Token Cost Tests', () => {
   });
 });
 
-describe('4. Redis Caching Unit Tests', () => {
-  test('Cache-Aside: Caches data on miss and serves on subsequent hits', async () => {
+describe('4. Request Body & Form Validation Tests', () => {
+  test('validateSchema: Catches missing required fields and invalid formats', () => {
+    const invalidData = { title: 'Hi', notes: '', priority: 'INVALID_P9', repoFullName: 'invalidrepo' };
+    const result = validateSchema(invalidData, ATTENTION_NOTE_SCHEMA);
+
+    expect(result.isValid).toBe(false);
+    expect(result.errors.title).toBeDefined();
+    expect(result.errors.notes).toBeDefined();
+    expect(result.errors.priority).toBeDefined();
+    expect(result.errors.repoFullName).toBeDefined();
+  });
+
+  test('validateSchema: Passes valid payloads', () => {
+    const validData = { title: 'Fix Auth Leak', notes: 'Needs urgent fix in middleware', priority: 'P0', repoFullName: 'facebook/react' };
+    const result = validateSchema(validData, ATTENTION_NOTE_SCHEMA);
+
+    expect(result.isValid).toBe(true);
+    expect(Object.keys(result.errors).length).toBe(0);
+  });
+});
+
+describe('5. Database & System Integration Tests', () => {
+  test('Redis Cache-Aside: Caches data on miss and serves on subsequent hits', async () => {
     const redis = new RedisCacheManager();
     let callCount = 0;
     const fetcher = async () => {
@@ -96,5 +122,25 @@ describe('4. Redis Caching Unit Tests', () => {
     expect(first.fromCache).toBe(false);
     expect(second.fromCache).toBe(true);
     expect(callCount).toBe(1);
+  });
+
+  test('MongoDB Aggregation: Aggregates unresolved notes by repository', async () => {
+    const stats = await runMongoAggregationPipeline();
+    expect(Array.isArray(stats)).toBe(true);
+    expect(stats.length).toBeGreaterThan(0);
+    expect(stats[0].repo).toBeDefined();
+  });
+
+  test('PostgreSQL Transaction: Commits atomic review transfer', async () => {
+    const tx = await executeAtomicReviewTransfer('pr_101', 'usr_senior_dev', 'usr_lead_maintainer');
+    expect(tx.status).toBe('COMMITTED');
+    expect(tx.executedSteps.length).toBe(5);
+  });
+
+  test('File Upload: Validates PNG magic byte header', () => {
+    const pngBuffer = Buffer.from([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A]);
+    const upload = validateAndProcessFileUpload('test_image.png', pngBuffer, 'image/png');
+    expect(upload.isValid).toBe(true);
+    expect(upload.mimeType).toBe('image/png');
   });
 });
