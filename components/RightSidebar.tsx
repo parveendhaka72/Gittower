@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { useRealTime } from '../hooks/useRealtime';
 
 export type ActiveWorkItem = {
   id: string;
@@ -77,10 +78,27 @@ export default function RightSidebar({
   const removeWaiting = (id: string) => setWaitingOn(waitingOn.filter(w => w.id !== id));
   const removeTimeline = (id: string) => setTimeline(timeline.filter(t => t.id !== id));
 
+  const { isConnected, events, triggerTestEvent } = useRealTime();
+
   return (
     <aside className="hidden 2xl:flex flex-col w-[360px] bg-app-base border border-app-border rounded-2xl m-4 h-[calc(100vh-32px)] shrink-0 overflow-y-auto shadow-xl [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-      <div className="p-5 border-b border-app-border/50 bg-gradient-to-b from-app-base to-app-base/50 sticky top-0 z-20 backdrop-blur-md rounded-t-2xl">
-        <h2 className="text-sm font-bold tracking-wider text-app-muted uppercase">Live Activity Center</h2>
+      <div className="p-5 border-b border-app-border/50 bg-gradient-to-b from-app-base to-app-base/50 sticky top-0 z-20 backdrop-blur-md rounded-t-2xl flex items-center justify-between">
+        <div>
+          <h2 className="text-sm font-bold tracking-wider text-app-muted uppercase">Live Activity Center</h2>
+          <div className="flex items-center gap-1.5 mt-1">
+            <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <span className="text-[11px] font-mono text-slate-400">
+              {isConnected ? 'Real-Time SSE Sync Active' : 'Connecting Real-Time...'}
+            </span>
+          </div>
+        </div>
+        <button
+          onClick={() => triggerTestEvent('PR_REVIEW_REQUESTED', 'Urgent review requested on PR #42')}
+          className="text-[10px] px-2 py-1 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 rounded-md transition-colors"
+          title="Emit Test Real-Time Event"
+        >
+          + Emit Event
+        </button>
       </div>
 
       {totalItems === 0 ? (
