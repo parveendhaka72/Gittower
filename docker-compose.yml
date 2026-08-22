@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://gittower:secretpassword@postgres:5432/gittower_db
+      - MONGODB_URI=mongodb://mongo:27017/gittower
+      - REDIS_URL=redis://redis:6379
+      - GITHUB_CLIENT_ID=${GITHUB_CLIENT_ID}
+      - GITHUB_CLIENT_SECRET=${GITHUB_CLIENT_SECRET}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - postgres
+      - mongo
+      - redis
+    restart: always
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: gittower
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: gittower_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  mongo:
+    image: mongo:7-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodata:/data/db
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redisdata:/data
+    restart: always
+
+volumes:
+  pgdata:
+  mongodata:
+  redisdata:
